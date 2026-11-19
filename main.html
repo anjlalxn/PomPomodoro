@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet"> 
+<title>PomPom Pomodoro</title>
+<link rel="shortcut icon" href="https://helloshopla.com/cdn/shop/collections/sanriocharacters_pompompurin-23.png?v=1758061447" type="image/x-icon">
+</head>
+<body>
+  
+   
+
+  
+    <div class="main-cont">
+        
+    <div class="container">
+        <h1 class="title-timer">Pomodoro Timer</h1>
+        <div class="pom-timer-img" id="sypic"></div>
+        <p id="msg">PomPom is waiting to study with you.</p>
+        <h1 class="time-stamp" id="time-stamp"></h1>
+
+        <div class="timer-btns">
+            <button id="start-btn" onclick="startTimer()">Start</button>
+            <button id="pause-btn" onclick="pauseCountdownTime()">Pause</button>
+            <button id="reset-btn" onclick="resetTimer()">Reset</button>
+        </div>
+        
+    </div>
+
+   <div class="modes">
+        <div class="pause-status">
+            <div class="dog-x"></div>
+            <div class="info"> <p>Gone for:</p>
+        <h1 class="time-stamp" id="time-stamp-pause"></h1></div>
+        </div>
+
+        <div class="btime" id="break-now">
+            <h3>You can take a break after the timer ends.</h3>
+        <div class="break-btns">
+            <button onclick="start5min()" id="sb">Take a short break</button>
+            <button onclick="start10min()" id="lb">Take a long break</button>
+            <button onclick="pauseBreak()" id="pb">Pause</button>
+
+        </div>
+
+        <div class="pause-status">
+            <div class="dog-x" style="background-image: url(1.jpg)"></div>
+            <div class="info"> <p>On Break for:</p>
+        <h1 class="time-stamp" id="time-stamp-break"></h1></div>
+        </div>
+
+
+        </div>
+
+
+    </div>
+
+    
+
+
+    </div>
+
+<div class="about-PomPom">
+  <h2>PomPom — A Discipline-Based Pomodoro Timer</h2>
+
+  <p>
+    PomPom is a structured Pomodoro timer designed to build real focus — not flexible excuses.
+    Inspired by the original time-boxing method developed by Francesco Cirillo, 
+    this system enforces commitment through uninterrupted work sessions and intentional breaks.
+  </p>
+
+  <h3>How It Works</h3>
+  <ul>
+    <li>25-minute deep focus session</li>
+    <li>5 or 15-minute structured break</li>
+    <li>Reset when you finish a task</li>
+    <li>No break manipulation, strictly follow allotted break time</li>
+    <li>Timers run with purpose</li>
+  </ul>
+
+  <p>
+    During focus mode, PomPom studies with you.  
+    During breaks, you recover properly.  
+    There is no half-work, no half-rest.
+  </p>
+
+  <p>
+    This timer is built for students and creators who want structure, discipline,
+    and measurable progress — not just a countdown clock. Focus is a decision. PomPom helps you commit to it.
+  </p>
+
+</div>
+    
+    <script src="script.js"></script>
+
+    
+</body>
+</html>
