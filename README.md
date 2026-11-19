@@ -14,8 +14,6 @@ git clone https://github.com/anjlalxn/PomPomodoro.git
 cd PomPomodoro
 ```
 
-Replace `PomPomodoro` with the name of your repository.
-
 Or...Click **Code → Download ZIP** on the repo page and extract it.
 
 ## Run
