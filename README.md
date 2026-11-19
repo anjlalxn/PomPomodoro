@@ -1,4 +1,7 @@
 # PomPom Pomodoro
+This is a non-commercial educational project. Pompompurin and all related
+characters are trademarks and copyrights of Sanrio Co., Ltd. This project is
+not affiliated with or endorsed by Sanrio.
 
 A discipline-based Pomodoro timer built with plain HTML, CSS, and JavaScript.
 
