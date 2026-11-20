@@ -42,3 +42,4 @@ PomPomodoro/
 
 - `node_modules` is not committed to Git. Run `npm install` once after cloning.
 - Keep the terminal running while you edit. The page reloads automatically when you save.
+- Don't commit package-lock.json changes unless you added a package (undo with git checkout package-lock.json).
