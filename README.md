@@ -1,70 +1,44 @@
-# PomPom Pomodoro
-This is a non-commercial educational project. Pompompurin and all related
-characters are trademarks and copyrights of Sanrio Co., Ltd. This project is
-not affiliated with or endorsed by Sanrio. The character images were sourced from Pinterest and edited by the author (facial expressions). The original artists are unknown, and all rights to the original artwork belong to their respective owners. No ownership is claimed over these images.
+## How to Run
 
-
-A discipline-based Pomodoro timer built with plain HTML, CSS, and JavaScript.
-
-- 25-minute focus session
-- 5 or 15-minute break
-- Pause, resume, and reset
-- PomPom reacts to how you use the timer
-
-## Clone (needs email for collaboration. Create a branch from main after cloning)
+You need [Node.js](https://nodejs.org) (LTS version) installed.
 
 ```bash
-git clone https://github.com/anjlalxn/PomPomodoro.git
-cd PomPomodoro
+cd pompom-ionic
+npm install
+npm start
 ```
 
-Or...Click **Code → Download ZIP** on the repo page and extract it.
+Then open **http://localhost:4200** in your browser.
 
-## Run
+> If `npm start` doesn't work, use `npx ng serve` instead.
+> If `npm install` shows an `ERESOLVE` error, use `npm install --legacy-peer-deps`.
 
-No install or build step is needed.
+**Do not open `home.page.html` directly in the browser.** It is an Angular template and will only show raw `{{ }}` text. Always run it with the commands above.
 
-1. Open the project folder.
-2. Double-click `main.html` to open it in your browser.
+## Where to Find the Files
 
-Or, with VS Code, install the **Live Server** extension, right-click `main.html`, and choose **Open with Live Server**.
+All the app code is inside `pompom-ionic/src/app/`.
 
-## Project Structure
+
+## Folder Structure
 
 ```
-Pomodoro-main/
-├── main.html     page layout
-├── style.css     styling
-├── script.js     timer logic
-└── 1.jpg - 6.jpg PomPom images
+PomPomodoro/
+└── pompom-ionic/
+    ├── package.json        (list of dependencies and scripts)
+    └── src/
+        ├── app/
+        │   ├── home/       (the main Pomodoro page)
+        │   ├── app.component.*
+        │   └── app.routes.ts
+        ├── assets/
+        ├── theme/
+        ├── global.scss
+        ├── index.html
+        └── main.ts
 ```
 
-## Requirements
+## Notes
 
-- Any modern browser (Chrome, Edge, Firefox)
-- Internet connection for Google Fonts (unless fonts are stored locally)
-- Git (only if you clone instead of downloading the ZIP)
-
-## Build the Android APK (optional)
-
-Requires Node.js, JDK 17, and Android Studio.
-
-```bash
-npm i -g cordova
-cordova create pomodoro com.pochi.pomodoro Pomodoro
-```
-
-Copy the project files into the new `pomodoro/www/` folder, then:
-
-```bash
-cd pomodoro
-cordova platform add android
-cordova plugin add cordova-plugin-local-notification
-cordova build android
-```
-
-The debug APK is at `platforms/android/app/build/outputs/apk/debug/`.
-
-## Notice
-
-WMA 3 Case Study. 
+- `node_modules` is not committed to Git. Run `npm install` once after cloning.
+- Keep the terminal running while you edit. The page reloads automatically when you save.
