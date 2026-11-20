@@ -1,0 +1,130 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>PomPom Pomodoro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="page">
+    <div class="main-cont">
+      <!-- Timer -->
+      <div class="container">
+        <h1 class="title-timer">Pomodoro Timer</h1>
+        <div class="pom-timer-img" [style.background-image]="'url(assets/' + picture() + ')'"></div>
+        <p class="msg">{{ message() }}</p>
+        <h1 class="time-stamp">{{ timeText() }}</h1>
+
+        <div class="timer-btns">
+          @if (phase() === 'idle' || phase() === 'finished') {
+            <ion-button class="pom-btn" (click)="startTimer()">Start</ion-button>
+          }
+          @if (phase() === 'focus' || phase() === 'paused') {
+            <ion-button class="pom-btn" (click)="pauseOrResume()">
+              {{ phase() === 'paused' ? 'Resume' : 'Pause' }}
+            </ion-button>
+          }
+          <ion-button class="pom-btn" (click)="resetTimer()">Reset</ion-button>
+        </div>
+      </div>
+
+      <!-- Side panels -->
+      <div class="modes">
+        <div class="pause-status">
+          <div class="dog-x" style="background-image: url(assets/6.jpg)"></div>
+          <div class="info">
+            <p>Gone for:</p>
+            <h1 class="time-stamp small">{{ pausedText() }}</h1>
+          </div>
+        </div>
+
+        @if (showBreakPanel()) {
+          <div class="btime">
+            <h3>Nice work! Time to take a break.</h3>
+
+            <div class="break-btns">
+              @if (!activeBreak()) {
+                <ion-button class="pom-btn" (click)="startBreak('short')">Short break</ion-button>
+                <ion-button class="pom-btn" (click)="startBreak('long')">Long break</ion-button>
+              } @else {
+                <ion-button class="pom-btn wide" (click)="pauseBreak()">
+                  {{ breakPaused() ? 'Resume' : 'Pause' }}
+                </ion-button>
+              }
+            </div>
+
+            <div class="pause-status">
+              <div class="dog-x" style="background-image: url(assets/1.jpg)"></div>
+              <div class="info">
+                <p>On Break for:</p>
+                <h1 class="time-stamp small">{{ breakText() }}</h1>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- To-do list -->
+    <div class="todo">
+      <h2>To-Do List</h2>
+      <p class="todo-count">{{ remaining() }} task{{ remaining() === 1 ? '' : 's' }} left</p>
+
+      <div class="todo-add">
+        <ion-input
+          fill="outline"
+          placeholder="What will you study today?"
+          [value]="newTask()"
+          (ionInput)="onTaskInput($event)"
+          (keyup.enter)="addTask()"
+        ></ion-input>
+        <ion-button class="pom-btn add" (click)="addTask()">Add</ion-button>
+      </div>
+
+      @if (tasks().length === 0) {
+        <p class="empty">No tasks yet. Add one and let PomPom study with you!</p>
+      }
+
+      @for (t of tasks(); track t.id) {
+        <div class="task" [class.done]="t.done">
+          <ion-checkbox [checked]="t.done" (ionChange)="toggleTask(t.id)">{{ t.text }}</ion-checkbox>
+          <button class="del" (click)="deleteTask(t.id)" aria-label="Delete task">✕</button>
+        </div>
+      }
+
+      @if (tasks().length > 0) {
+        <button class="clear-done" (click)="clearDone()">Clear finished tasks</button>
+      }
+    </div>
+
+    <!-- About -->
+    <div class="about-PomPom">
+      <h2>PomPom — A Discipline-Based Pomodoro Timer</h2>
+
+      <p>
+        PomPom is a structured Pomodoro timer designed to build real focus, not flexible excuses.
+        Inspired by the original time-boxing method developed by Francesco Cirillo, this system
+        enforces commitment through uninterrupted work sessions and intentional breaks.
+      </p>
+
+      <h3>How It Works</h3>
+      <ul>
+        <li>25-minute deep focus session</li>
+        <li>5 or 15-minute structured break</li>
+        <li>Reset when you finish a task</li>
+        <li>No break manipulation, strictly follow allotted break time</li>
+        <li>Timers run with purpose</li>
+      </ul>
+
+      <p>
+        During focus mode, PomPom studies with you. During breaks, you recover properly. There is
+        no half-work, no half-rest.
+      </p>
+
+      <p>
+        This timer is built for students and creators who want structure, discipline, and
+        measurable progress and not just a countdown clock. Focus is a decision. PomPom helps you
+        commit to it.
+      </p>
+    </div>
+  </div>
+</ion-content>

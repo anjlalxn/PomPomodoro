@@ -1,0 +1,296 @@
+ion-toolbar {
+  --background: #fffec4;
+  --color: rgb(148, 55, 55);
+}
+
+ion-title {
+  font-family: 'Lilita One', cursive;
+}
+
+ion-content {
+  --background: radial-gradient(circle, rgba(255, 254, 196, 1) 0%, rgba(255, 255, 255, 1) 70%);
+}
+
+.page {
+  padding: 16px;
+}
+
+h1,
+h2 {
+  font-family: 'Lilita One', cursive;
+  color: rgba(166, 106, 106, 0.788);
+}
+
+p {
+  font-family: 'Lilita One', cursive;
+  color: rgb(98, 84, 41);
+}
+
+/* ---------- Layout ---------- */
+.main-cont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.modes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  margin-top: 0;
+  width: 100%;
+  max-width: 450px;
+}
+
+/* ---------- Timer ---------- */
+.title-timer {
+  font-weight: 900;
+  font-size: 40px;
+  margin: 8px 0 16px;
+}
+
+.pom-timer-img {
+  height: 250px;
+  width: 250px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 40px;
+}
+
+.time-stamp {
+  font-size: 60px;
+  margin: 0 0 16px;
+}
+
+.time-stamp.small {
+  font-size: 40px;
+  margin: 0;
+}
+
+.timer-btns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* ---------- Buttons ---------- */
+.pom-btn {
+  --background: antiquewhite;
+  --background-hover: #f5dcc0;
+  --background-activated: #f5dcc0;
+  --color: rgb(148, 55, 55);
+  --border-radius: 15px;
+  --border-width: 3px;
+  --border-style: dashed;
+  --border-color: rgb(123, 15, 15);
+  --box-shadow: none;
+  font-family: 'Lilita One', cursive;
+  font-size: 20px;
+  text-transform: none;
+  width: 150px;
+  height: 50px;
+}
+
+.pom-btn.wide {
+  width: 200px;
+}
+
+.pom-btn.add {
+  width: 90px;
+  flex-shrink: 0;
+}
+
+/* ---------- Pause / break panels ---------- */
+.pause-status {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 450px;
+  min-height: 100px;
+  border: 4px solid rgb(207, 186, 145);
+  border-radius: 20px;
+  background-color: rgb(122, 81, 80);
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 10px;
+
+  p,
+  h1 {
+    color: white;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.dog-x {
+  height: 80px;
+  width: 80px;
+  flex-shrink: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+  align-self: center;
+  margin-left: 10px;
+}
+
+.btime {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  border: 2px solid rgb(165, 114, 42);
+  padding: 22px;
+  border-radius: 20px;
+
+  h3 {
+    margin: 0;
+    text-align: center;
+    font-family: 'Lilita One', cursive;
+    font-size: 25px;
+    color: rgb(177, 111, 111);
+  }
+}
+
+.break-btns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* ---------- To-do list ---------- */
+.todo {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  margin: 40px auto 0;
+  padding: 20px;
+  background: #fff;
+  border: 3px dashed rgb(207, 186, 145);
+  border-radius: 25px;
+
+  h2 {
+    margin: 0;
+    font-size: 32px;
+    text-align: center;
+  }
+}
+
+.todo-count {
+  text-align: center;
+  margin: 4px 0 16px;
+}
+
+.todo-add {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+
+  ion-input {
+    --color: rgb(98, 84, 41);
+    --border-color: rgb(207, 186, 145);
+    --border-radius: 12px;
+    font-family: 'Google Sans', sans-serif;
+  }
+}
+
+.empty {
+  text-align: center;
+  font-size: 15px;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px dashed rgb(207, 186, 145);
+  font-family: 'Google Sans', sans-serif;
+
+  ion-checkbox {
+    --size: 22px;
+    --checkbox-background-checked: rgb(177, 111, 111);
+    --border-color-checked: rgb(177, 111, 111);
+    color: rgb(98, 84, 41);
+    flex: 1;
+  }
+
+  &.done ion-checkbox {
+    text-decoration: line-through;
+    opacity: 0.55;
+  }
+}
+
+.del {
+  background: none;
+  border: none;
+  color: rgb(177, 111, 111);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.clear-done {
+  display: block;
+  margin: 16px auto 0;
+  background: none;
+  border: none;
+  font-family: 'Lilita One', cursive;
+  color: rgb(177, 111, 111);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- About ---------- */
+.about-PomPom {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  padding: 20px;
+  margin: 40px auto 60px;
+  background-color: rgb(205, 156, 126);
+  border-radius: 30px;
+  border: 13px dashed rgb(163, 115, 76);
+  color: rgb(255, 255, 243);
+
+  h2 {
+    font-weight: 900;
+    font-size: 36px;
+    color: rgb(255, 255, 243);
+  }
+
+  h3,
+  li {
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+  }
+
+  p {
+    font-family: 'Google Sans', sans-serif;
+    color: #fff;
+  }
+}

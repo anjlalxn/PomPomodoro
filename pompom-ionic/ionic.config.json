@@ -1,0 +1,7 @@
+{
+  "name": "pompom-ionic",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
