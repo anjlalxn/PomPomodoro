@@ -59,6 +59,12 @@ export class HomePage implements OnDestroy {
   private pauseTimer: Timer = null;
   private breakTimer: Timer = null;
 
+  // Real timestamps, so Android suspending the WebView can't make the timer drift
+  private focusEndAt = 0;
+  private breakEndAt = 0;
+  private pausedAt = 0;
+  private impatient = false;
+
   constructor() {
     this.loadTasks();
   }
@@ -69,38 +75,52 @@ export class HomePage implements OnDestroy {
     this.stopBreak();
   }
 
+  /** For Anjela: when the running focus session ends (ms timestamp), for scheduling a notification. */
+  get focusEndsAt(): number {
+    return this.focusEndAt;
+  }
+
   // ================= Focus timer =================
   startTimer() {
     this.resetBreak();
     this.stopFocus();
     this.stopPause();
+    this.time.set(FOCUS_SECONDS);
+    this.focusEndAt = Date.now() + FOCUS_SECONDS * 1000;
     this.picture.set('2.jpg');
     this.message.set('PomPom is studying with you. Focus mode on!');
     this.phase.set('focus');
     this.showBreakPanel.set(false);
-    this.focusTimer = setInterval(() => this.tick(), 1000);
+    this.focusTimer = setInterval(() => this.tick(), 250);
   }
 
   pauseOrResume() {
     if (this.phase() === 'focus') {
+      this.time.set(this.secondsLeft(this.focusEndAt));
       this.stopFocus();
+      this.pausedAt = Date.now();
+      this.impatient = false;
       this.picture.set('1.jpg');
       this.message.set('PomPom will wait for you to come back.');
       this.phase.set('paused');
-      this.pauseTimer = setInterval(() => this.pauseTick(), 1000);
+      this.pauseTimer = setInterval(() => this.pauseTick(), 250);
     } else if (this.phase() === 'paused') {
       this.stopPause();
       this.timePaused.set(0);
+      this.focusEndAt = Date.now() + this.time() * 1000;
       this.picture.set('2.jpg');
       this.message.set('PomPom is studying with you. Focus mode on!');
       this.phase.set('focus');
-      this.focusTimer = setInterval(() => this.tick(), 1000);
+      this.focusTimer = setInterval(() => this.tick(), 250);
     }
   }
 
   resetTimer() {
     this.stopFocus();
     this.stopPause();
+    this.resetBreak(); // FIX: reset also cancels a running break
+    this.showBreakPanel.set(false);
+    this.impatient = false;
     this.time.set(FOCUS_SECONDS);
     this.timePaused.set(0);
     this.picture.set('4.jpg');
@@ -109,23 +129,26 @@ export class HomePage implements OnDestroy {
   }
 
   private tick() {
-    this.time.update((t) => t - 1);
-    if (this.time() <= 0) {
-      this.stopFocus();
-      this.stopPause();
-      this.picture.set('3.jpg');
-      this.message.set('Session complete! PomPom is proud of you.');
-      this.phase.set('finished');
-      this.showBreakPanel.set(true);
-      this.time.set(FOCUS_SECONDS);
-      this.timePaused.set(0);
-    }
+    const left = this.secondsLeft(this.focusEndAt);
+    this.time.set(left);
+    if (left > 0) return;
+
+    this.stopFocus();
+    this.stopPause();
+    this.picture.set('3.jpg');
+    this.message.set('Session complete! PomPom is proud of you.');
+    this.phase.set('finished');
+    this.showBreakPanel.set(true);
+    this.time.set(FOCUS_SECONDS);
+    this.timePaused.set(0);
+    // TODO (Anjela): play alarm / fire "focus done" notification here
   }
 
   private pauseTick() {
-    this.timePaused.update((t) => t + 1);
-    if (this.timePaused() >= IMPATIENT_AFTER_SECONDS) {
-      this.stopPause();
+    const gone = Math.floor((Date.now() - this.pausedAt) / 1000);
+    this.timePaused.set(gone); // FIX: keeps counting past 10 min
+    if (gone >= IMPATIENT_AFTER_SECONDS && !this.impatient) {
+      this.impatient = true;
       this.picture.set('5.jpg');
       this.message.set('PomPom is getting impatient. Where did you go?');
     }
@@ -134,29 +157,39 @@ export class HomePage implements OnDestroy {
   // ================= Breaks =================
   startBreak(kind: BreakKind) {
     this.stopBreak();
+    const total = kind === 'short' ? SHORT_BREAK_SECONDS : LONG_BREAK_SECONDS;
     this.activeBreak.set(kind);
     this.breakPaused.set(false);
-    this.breakTime.set(kind === 'short' ? SHORT_BREAK_SECONDS : LONG_BREAK_SECONDS);
-    this.breakTimer = setInterval(() => this.tickBreak(), 1000);
+    this.breakTime.set(total);
+    this.breakEndAt = Date.now() + total * 1000;
+    this.breakTimer = setInterval(() => this.tickBreak(), 250);
   }
 
   pauseBreak() {
     if (!this.activeBreak()) return;
     if (!this.breakPaused()) {
+      this.breakTime.set(this.secondsLeft(this.breakEndAt));
       this.stopBreak();
       this.breakPaused.set(true);
     } else {
       this.breakPaused.set(false);
-      this.breakTimer = setInterval(() => this.tickBreak(), 1000);
+      this.breakEndAt = Date.now() + this.breakTime() * 1000;
+      this.breakTimer = setInterval(() => this.tickBreak(), 250);
     }
   }
 
   private tickBreak() {
-    this.breakTime.update((t) => t - 1);
-    if (this.breakTime() <= 0) {
-      this.resetBreak();
-      this.showBreakPanel.set(false);
-    }
+    const left = this.secondsLeft(this.breakEndAt);
+    this.breakTime.set(left);
+    if (left > 0) return;
+
+    this.resetBreak();
+    this.showBreakPanel.set(false);
+    // FIX: leave the "Session complete" state so the UI isn't stale after the break
+    this.phase.set('idle');
+    this.picture.set('4.jpg');
+    this.message.set('Break over! Ready for another round?');
+    // TODO (Anjela): play alarm / fire "break done" notification here
   }
 
   private resetBreak() {
@@ -164,6 +197,10 @@ export class HomePage implements OnDestroy {
     this.activeBreak.set(null);
     this.breakPaused.set(false);
     this.breakTime.set(SHORT_BREAK_SECONDS);
+  }
+
+  private secondsLeft(endAt: number): number {
+    return Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
   }
 
   // ================= To-do list =================
