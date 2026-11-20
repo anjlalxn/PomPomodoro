@@ -11,7 +11,7 @@ A discipline-based Pomodoro timer built with plain HTML, CSS, and JavaScript.
 - Pause, resume, and reset
 - PomPom reacts to how you use the timer
 
-## Clone (needs email for collaboration)
+## Clone (needs email for collaboration. Create a branch from main after cloning)
 
 ```bash
 git clone https://github.com/anjlalxn/PomPomodoro.git
