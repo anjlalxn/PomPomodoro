@@ -1,0 +1,10 @@
+pompom-ionic/angular.json
+src/app/chat/secrets.ts
+pompom-ionic/notif-log.txt
+pompom-ionic/src/app/chat/secrets.ts
+node_modules/
+www/
+platforms/
+plugins/
+.angular/
+.env

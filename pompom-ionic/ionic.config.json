@@ -1,0 +1,7 @@
+{
+  "name": "pompom-ionic",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular-standalone"
+}
