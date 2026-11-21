@@ -7,6 +7,9 @@ import {
   IonButton,
   IonInput,
   IonCheckbox,
+  IonSegment, // NEW
+  IonSegmentButton, // NEW
+  IonLabel, // NEW
 } from '@ionic/angular';
 
 interface Task {
@@ -17,6 +20,7 @@ interface Task {
 
 type Phase = 'idle' | 'focus' | 'paused' | 'finished';
 type BreakKind = 'short' | 'long';
+type Mode = 'pomodoro' | BreakKind; // NEW
 type Timer = ReturnType<typeof setInterval> | null;
 
 const FOCUS_SECONDS = 25 * 60;
@@ -29,7 +33,18 @@ const TASKS_KEY = 'pompom-tasks';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonInput, IonCheckbox],
+  imports: [
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButton,
+    IonInput,
+    IonCheckbox,
+    IonSegment, // NEW
+    IonSegmentButton, // NEW
+    IonLabel, // NEW
+  ],
 })
 export class HomePage implements OnDestroy {
   // ---- Focus timer state ----
@@ -38,6 +53,13 @@ export class HomePage implements OnDestroy {
   picture = signal('3.jpg');
   message = signal('PomPom is waiting to study with you.');
   phase = signal<Phase>('idle');
+
+  // ---- Mode (NEW) ----
+  mode = signal<Mode>('pomodoro');
+  modeTitle = computed(() => {
+    const m = this.mode();
+    return m === 'pomodoro' ? 'Pomodoro Timer' : m === 'short' ? 'Short Break' : 'Long Break';
+  });
 
   // ---- Break state ----
   showBreakPanel = signal(false);
@@ -65,19 +87,74 @@ export class HomePage implements OnDestroy {
   private pausedAt = 0;
   private impatient = false;
 
+  // NEW: alarm sound
+  private alarm = new Audio('assets/alarm.mp3');
+  private audioUnlocked = false;
+
+  // NEW: app background state, used so the end-of-timer notification isn't cancelled while away
+  private inBackground = false;
+  private finishing = false;
+  private skipAlarm = false; // NEW: stops the in-app alarm doubling the notification sound
+
   constructor() {
     this.loadTasks();
+    // NEW: browsers block sound until the first tap (needed for ng serve in Chrome)
+    document.addEventListener('pointerdown', () => this.unlockAudio(), { once: true });
+
+    // NEW: Cordova fires pause/resume when the app leaves/returns
+    document.addEventListener('deviceready', () => {
+      // Android 13+ needs this or notifications won't show
+      const perms = (window as any).cordova?.plugins?.permissions;
+      perms?.requestPermission('android.permission.POST_NOTIFICATIONS', () => {}, () => {});
+
+      document.addEventListener('pause', () => this.onAppPause());
+      document.addEventListener('resume', () => this.onAppResume());
+    });
   }
 
   ngOnDestroy() {
     this.stopFocus();
     this.stopPause();
     this.stopBreak();
+    this.stopLeaveService(); // NEW
   }
 
   /** For Anjela: when the running focus session ends (ms timestamp), for scheduling a notification. */
   get focusEndsAt(): number {
     return this.focusEndAt;
+  }
+
+  // ================= Mode switching (NEW) =================
+  onModeChange(ev: CustomEvent) {
+    const next = ev.detail.value as Mode;
+    if (!next || next === this.mode()) return;
+
+    // Switching modes cancels whatever is running
+    this.stopFocus();
+    this.stopPause();
+    this.stopBreak();
+    this.impatient = false;
+    this.timePaused.set(0);
+    this.time.set(FOCUS_SECONDS);
+    this.showBreakPanel.set(false);
+    this.phase.set('idle');
+
+    this.mode.set(next);
+    this.resetBreak(); // sets the break clock to the new mode's length
+
+    if (next === 'pomodoro') {
+      this.picture.set('3.jpg');
+      this.message.set('PomPom is waiting to study with you.');
+    } else {
+      this.picture.set('1.jpg');
+      this.message.set('PomPom is ready to rest with you.');
+    }
+  }
+
+  resetBreakTimer() {
+    this.resetBreak();
+    this.picture.set('1.jpg');
+    this.message.set('PomPom is ready to rest with you.');
   }
 
   // ================= Focus timer =================
@@ -87,6 +164,7 @@ export class HomePage implements OnDestroy {
     this.stopPause();
     this.time.set(FOCUS_SECONDS);
     this.focusEndAt = Date.now() + FOCUS_SECONDS * 1000;
+    this.scheduleDone(1, this.focusEndAt, 'Focus session complete! Time for a break.'); // NEW
     this.picture.set('2.jpg');
     this.message.set('PomPom is studying with you. Focus mode on!');
     this.phase.set('focus');
@@ -108,6 +186,7 @@ export class HomePage implements OnDestroy {
       this.stopPause();
       this.timePaused.set(0);
       this.focusEndAt = Date.now() + this.time() * 1000;
+      this.scheduleDone(1, this.focusEndAt, 'Focus session complete! Time for a break.'); // NEW
       this.picture.set('2.jpg');
       this.message.set('PomPom is studying with you. Focus mode on!');
       this.phase.set('focus');
@@ -133,15 +212,19 @@ export class HomePage implements OnDestroy {
     this.time.set(left);
     if (left > 0) return;
 
+    this.finishing = true; // NEW: if we're in the background, let the scheduled notification fire
     this.stopFocus();
     this.stopPause();
     this.picture.set('3.jpg');
-    this.message.set('Session complete! PomPom is proud of you.');
+    this.message.set('Session complete! PomPom is proud of you. Pick a break above.');
     this.phase.set('finished');
     this.showBreakPanel.set(true);
     this.time.set(FOCUS_SECONDS);
     this.timePaused.set(0);
     // TODO (Anjela): play alarm / fire "focus done" notification here
+    this.playAlarm(); // NEW
+    this.stopLeaveService(); // NEW: session is over, remove the "still running" notification
+    this.finishing = false; // NEW
   }
 
   private pauseTick() {
@@ -162,7 +245,9 @@ export class HomePage implements OnDestroy {
     this.breakPaused.set(false);
     this.breakTime.set(total);
     this.breakEndAt = Date.now() + total * 1000;
+    this.scheduleDone(2, this.breakEndAt, 'Break over! Ready for another round?'); // NEW
     this.breakTimer = setInterval(() => this.tickBreak(), 250);
+    this.message.set('PomPom is resting with you. Enjoy your break!'); // NEW
   }
 
   pauseBreak() {
@@ -174,6 +259,7 @@ export class HomePage implements OnDestroy {
     } else {
       this.breakPaused.set(false);
       this.breakEndAt = Date.now() + this.breakTime() * 1000;
+      this.scheduleDone(2, this.breakEndAt, 'Break over! Ready for another round?'); // NEW
       this.breakTimer = setInterval(() => this.tickBreak(), 250);
     }
   }
@@ -183,6 +269,8 @@ export class HomePage implements OnDestroy {
     this.breakTime.set(left);
     if (left > 0) return;
 
+    this.finishing = true; // NEW
+    this.mode.set('pomodoro'); // NEW: go back to the Pomodoro tab when the break ends
     this.resetBreak();
     this.showBreakPanel.set(false);
     // FIX: leave the "Session complete" state so the UI isn't stale after the break
@@ -190,13 +278,17 @@ export class HomePage implements OnDestroy {
     this.picture.set('4.jpg');
     this.message.set('Break over! Ready for another round?');
     // TODO (Anjela): play alarm / fire "break done" notification here
+    this.playAlarm(); // NEW
+    this.stopLeaveService(); // NEW
+    this.finishing = false; // NEW
   }
 
   private resetBreak() {
     this.stopBreak();
     this.activeBreak.set(null);
     this.breakPaused.set(false);
-    this.breakTime.set(SHORT_BREAK_SECONDS);
+    // CHANGED: idle break clock matches the selected mode (long = 15:00)
+    this.breakTime.set(this.mode() === 'long' ? LONG_BREAK_SECONDS : SHORT_BREAK_SECONDS);
   }
 
   private secondsLeft(endAt: number): number {
@@ -254,6 +346,7 @@ export class HomePage implements OnDestroy {
   private stopFocus() {
     if (this.focusTimer) clearInterval(this.focusTimer);
     this.focusTimer = null;
+    this.cancelDone(1); // NEW
   }
 
   private stopPause() {
@@ -264,5 +357,84 @@ export class HomePage implements OnDestroy {
   private stopBreak() {
     if (this.breakTimer) clearInterval(this.breakTimer);
     this.breakTimer = null;
+    this.cancelDone(2); // NEW
+  }
+
+  // NEW: unlock audio on the first tap so later playback isn't blocked
+  private unlockAudio() {
+    if (this.audioUnlocked) return;
+    this.alarm.muted = true;
+    this.alarm
+      .play()
+      .then(() => {
+        this.alarm.pause();
+        this.alarm.currentTime = 0;
+        this.alarm.muted = false;
+        this.audioUnlocked = true;
+      })
+      .catch(() => {
+        this.alarm.muted = false;
+      });
+  }
+
+  // NEW
+  private playAlarm() {
+    if (this.inBackground || this.skipAlarm) return; // NEW: the notification already rang
+    this.alarm.currentTime = 0;
+    this.alarm.play().catch(() => {});
+  }
+
+  // ================= Leaving the app (NEW) =================
+  // NEW: user leaves while a focus or break timer is running -> keep the app alive
+  private onAppPause() {
+    this.inBackground = true;
+    if (this.phase() === 'focus') {
+      this.startLeaveService('PomPom is waiting for you', this.focusEndAt);
+    } else if (this.activeBreak() && !this.breakPaused()) {
+      this.startLeaveService('PomPom is resting with you', this.breakEndAt);
+    }
+  }
+
+  // NEW: user comes back -> remove the notification and refresh the clock right away
+  private onAppResume() {
+    this.inBackground = false;
+    this.stopLeaveService();
+    this.skipAlarm = true; // NEW: if the timer ended while away, the notification already rang
+    if (this.phase() === 'focus') this.tick();
+    else if (this.activeBreak() && !this.breakPaused()) this.tickBreak();
+    this.skipAlarm = false; // NEW
+  }
+
+  // NEW: foreground service notification shows when the timer ends
+  private startLeaveService(title: string, endAt: number) {
+    const fs = (window as any).cordova?.plugins?.foregroundService;
+    if (!fs) return; // not on a phone (ng serve), skip quietly
+    const endTime = new Date(endAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    fs.start(title, `Timer ends at ${endTime}. Come back!`);
+  }
+
+  // NEW
+  private stopLeaveService() {
+    (window as any).cordova?.plugins?.foregroundService?.stop();
+  }
+
+  // NEW: schedule a notification (with sound) for when the timer ends
+  private scheduleDone(id: number, endAt: number, text: string) {
+    const n = (window as any).cordova?.plugins?.notification?.local;
+    if (!n) return;
+    n.schedule({
+      id,
+      title: 'PomPom',
+      text,
+      trigger: { at: new Date(endAt) },
+      sound: true,
+      priority: 2,
+    });
+  }
+
+  // NEW: don't cancel the end notification if the timer finished while the app was in the background
+  private cancelDone(id: number) {
+    if (this.finishing && this.inBackground) return;
+    (window as any).cordova?.plugins?.notification?.local?.cancel(id);
   }
 }

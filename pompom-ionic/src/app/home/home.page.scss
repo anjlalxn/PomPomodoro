@@ -3,6 +3,35 @@ ion-toolbar {
   --color: rgb(148, 55, 55);
 }
 
+.mode-segment {
+  font-family: 'Lilita One', cursive;
+  max-width: 480px;
+  margin: 0 auto 12px;
+  --background: #f8e6d8;
+  border-radius: 14px;
+}
+
+ion-segment-button {
+  --color: #8b2e2e;
+  --color-checked: #5a1414;          // dark maroon, readable on the light background
+  --color-focused: #5a1414;
+  --indicator-color: #8b2e2e;
+  --indicator-height: 3px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0;                 
+  text-transform: none;              
+}
+
+ion-segment-button ion-label {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
 ion-title {
   font-family: 'Lilita One', cursive;
 }

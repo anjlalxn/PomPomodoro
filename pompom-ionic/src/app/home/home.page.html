@@ -9,21 +9,48 @@
     <div class="main-cont">
       <!-- Timer -->
       <div class="container">
-        <h1 class="title-timer">Pomodoro Timer</h1>
+        <!-- NEW: mode switcher -->
+        <ion-segment class="mode-segment" [value]="mode()" (ionChange)="onModeChange($event)">
+          <ion-segment-button value="pomodoro">
+            <ion-label>Pomodoro</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="short">
+            <ion-label>Short Break</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="long">
+            <ion-label>Long Break</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <!-- CHANGED: title follows the mode -->
+        <h1 class="title-timer">{{ modeTitle() }}</h1>
         <div class="pom-timer-img" [style.background-image]="'url(assets/' + picture() + ')'"></div>
         <p class="msg">{{ message() }}</p>
-        <h1 class="time-stamp">{{ timeText() }}</h1>
+        <!-- CHANGED: shows break time in break modes -->
+        <h1 class="time-stamp">{{ mode() === 'pomodoro' ? timeText() : breakText() }}</h1>
 
         <div class="timer-btns">
-          @if (phase() === 'idle' || phase() === 'finished') {
-            <ion-button class="pom-btn" (click)="startTimer()">Start</ion-button>
+          @if (mode() === 'pomodoro') {
+            @if (phase() === 'idle' || phase() === 'finished') {
+              <ion-button class="pom-btn" (click)="startTimer()">Start</ion-button>
+            }
+            @if (phase() === 'focus' || phase() === 'paused') {
+              <ion-button class="pom-btn" (click)="pauseOrResume()">
+                {{ phase() === 'paused' ? 'Resume' : 'Pause' }}
+              </ion-button>
+            }
+            <ion-button class="pom-btn" (click)="resetTimer()">Reset</ion-button>
+          } @else {
+            <!-- NEW: break controls -->
+            @if (!activeBreak()) {
+              <ion-button class="pom-btn" (click)="startBreak(mode() === 'long' ? 'long' : 'short')">Start</ion-button>
+            } @else {
+              <ion-button class="pom-btn" (click)="pauseBreak()">
+                {{ breakPaused() ? 'Resume' : 'Pause' }}
+              </ion-button>
+            }
+            <ion-button class="pom-btn" (click)="resetBreakTimer()">Reset</ion-button>
           }
-          @if (phase() === 'focus' || phase() === 'paused') {
-            <ion-button class="pom-btn" (click)="pauseOrResume()">
-              {{ phase() === 'paused' ? 'Resume' : 'Pause' }}
-            </ion-button>
-          }
-          <ion-button class="pom-btn" (click)="resetTimer()">Reset</ion-button>
         </div>
       </div>
 
@@ -36,31 +63,7 @@
             <h1 class="time-stamp small">{{ pausedText() }}</h1>
           </div>
         </div>
-
-        @if (showBreakPanel()) {
-          <div class="btime">
-            <h3>Nice work! Time to take a break.</h3>
-
-            <div class="break-btns">
-              @if (!activeBreak()) {
-                <ion-button class="pom-btn" (click)="startBreak('short')">Short break</ion-button>
-                <ion-button class="pom-btn" (click)="startBreak('long')">Long break</ion-button>
-              } @else {
-                <ion-button class="pom-btn wide" (click)="pauseBreak()">
-                  {{ breakPaused() ? 'Resume' : 'Pause' }}
-                </ion-button>
-              }
-            </div>
-
-            <div class="pause-status">
-              <div class="dog-x" style="background-image: url(assets/1.jpg)"></div>
-              <div class="info">
-                <p>On Break for:</p>
-                <h1 class="time-stamp small">{{ breakText() }}</h1>
-              </div>
-            </div>
-          </div>
-        }
+        <!-- CHANGED: the old "Nice work!" break panel is gone; the segment replaces it -->
       </div>
     </div>
 

@@ -1,7 +1,8 @@
 {
   "name": "pompom-ionic",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
   "type": "angular-standalone"
 }
