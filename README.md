@@ -92,25 +92,14 @@ npx cordova-res --skip-config --copy
 ```
 Type **y** if it asks to install. The 10 "Error occurred while copying" warnings for `foreground` and `background` files are harmless.
 
-**6. Uninstall the old PomPom app from the phone.** Android caches the old icon.
-
-**7. Build and run on the phone**
-```bash
-ionic cordova run android --device
-```
-Or just build the APK:
+**6. Build the APK**
 ```bash
 ionic cordova build android
 ```
-This needs Android Studio, the Android SDK and JDK installed, plus USB debugging turned on on the phone.
+This needs Android Studio, the Android SDK and JDK installed.
 
-**What to test on the phone**
-- The new icon and splash screen show.
-- Start a focus timer, leave the app, and check that the "still running" notification appears and that an alert fires when the timer ends.
-- Android 13+ should ask for notification permission on first launch.
-
-**8. Get the APK**
-The APK is created by the build command in step 7. It is not in the repo. Find it here (inside `pompom-ionic`):
+**7. Get the APK**
+The APK is created by the build command in step 6. It is not in the repo. Find it here (inside `pompom-ionic`):
 ```
 platforms/android/app/build/outputs/apk/debug/app-debug.apk
 ```
@@ -119,7 +108,7 @@ If your Cordova version is older, the path may be `platforms/android/build/outpu
 - Do **not** commit the APK to the repo. Share it by Google Drive
 - The debug APK is enough for the school project. `ionic cordova build android --release` makes an **unsigned** APK that phones won't install until it is signed with a keystore.
 
-**9. Push to the repo once everything works**
+**8. Push to the repo once everything works**
 ```bash
 git status
 git add .
