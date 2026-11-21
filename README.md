@@ -64,6 +64,22 @@ git clone <your-repo-url>
 cd <project-folder>
 npm install
 ```
+### Add your Groq API key
+ 
+The PomPom AI study buddy uses the [Groq API](https://console.groq.com/keys). The key is not included in this repo, so you need your own (it's free to create).
+ 
+1. Copy the example file:
+```bash
+cp src/app/secrets.example.ts src/app/secrets.ts
+```
+ 
+2. Open `src/app/secrets.ts` and paste your key:
+```ts
+export const GROQ_API_KEY = 'your-groq-api-key-here';
+```
+ 
+`secrets.ts` is listed in `.gitignore`, so it won't be committed. Never commit your key or share an APK built with it, because keys inside an app can be extracted.
+
 
 ### Run in the browser
 
