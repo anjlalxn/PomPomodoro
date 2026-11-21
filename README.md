@@ -1,5 +1,12 @@
-## How to Run
+## Clone inside an empty folder in VSCODE and switch to final branch first
 
+```bash
+git clone https://github.com/anjlalxn/PomPomodoro.git
+cd PomPomodoro
+git checkout final-branch
+```
+
+## How to Run
 You need [Node.js](https://nodejs.org) (LTS version) installed.
 
 ```bash
@@ -17,7 +24,7 @@ Then open **http://localhost:4200** in your browser.
 
 ## Where to Find the Files
 
-All the app code is inside `pompom-ionic/src/app/`.
+All the app code is inside `pompom-ionic/src/app/home`.
 
 
 ## Folder Structure
@@ -43,3 +50,73 @@ PomPomodoro/
 - `node_modules` is not committed to Git. Run `npm install` once after cloning.
 - Keep the terminal running while you edit. The page reloads automatically when you save.
 - Don't commit package-lock.json changes unless you added a package (undo with git checkout package-lock.json).
+
+# Final Steps 
+
+Run these in `pompom-ionic`, in this order.
+
+**1. Get the code and install packages if you haven't yet**
+```bash
+cd pompom-ionic
+npm install
+npm start
+```
+
+**2. Check `ionic.config.json`.** The `"capacitor": {}` line must be removed, or every `ionic cordova` command will refuse to run. It should list only `cordova`.
+
+**3. Add the Android platform** (skip if a `platforms/android` folder already exists)
+```bash
+ionic cordova platform add android
+```
+
+**4. Install the plugins listed in `config.xml`**
+```bash
+ionic cordova prepare android
+ionic cordova plugin ls
+```
+The list should show these 8 plugins:
+- `cordova-plugin-statusbar`
+- `cordova-plugin-device`
+- `cordova-plugin-splashscreen`
+- `cordova-plugin-ionic-webview`
+- `cordova-plugin-ionic-keyboard`
+- `cordova-plugin-foreground-service`
+- `cordova-plugin-local-notification`
+- `cordova-plugin-android-permissions`
+
+If any are missing, add them with `ionic cordova plugin add <name> --save`.
+
+**5. Regenerate the icons and splash** (only needed if the committed ones in `resources/android` and `resources/ios` are missing)
+```bash
+npx cordova-res --skip-config --copy
+```
+Type **y** if it asks to install. The 10 "Error occurred while copying" warnings for `foreground` and `background` files are harmless.
+
+**6. Uninstall the old PomPom app from the phone.** Android caches the old icon.
+
+**7. Build and run on the phone**
+```bash
+ionic cordova run android --device
+```
+Or just build the APK:
+```bash
+ionic cordova build android
+```
+This needs Android Studio, the Android SDK and JDK installed, plus USB debugging turned on on the phone.
+
+**What to test on the phone**
+- The new icon and splash screen show.
+- Start a focus timer, leave the app, and check that the "still running" notification appears and that an alert fires when the timer ends.
+- Android 13+ should ask for notification permission on first launch.
+
+**8. Push to the repo once everything works**
+```bash
+git status
+git add .
+git commit -m "Add icons, splash, plugins and Android build setup"
+git pull origin final-branch
+git push origin final-branch
+```
+- Run `git status` first. `platforms/`, `plugins/`, `node_modules/` and any `.apk` file should **not** appear. If they do, don't commit them.
+- Make sure the fixed `ionic.config.json` (without `capacitor`), `config.xml` and the `resources/` folder are included.
+- If `git pull` shows a conflict, fix it in VS Code before pushing.
