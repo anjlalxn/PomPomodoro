@@ -60,8 +60,8 @@ npm i -g @ionic/cli cordova
 ### Install
 
 ```bash
-git clone <your-repo-url>
-cd <project-folder>
+git clone https://github.com/anjlalxn/PomPomodoro
+cd pompom-ionic
 npm install
 ```
 ### Add your Groq API key
