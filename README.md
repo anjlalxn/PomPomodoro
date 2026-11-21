@@ -15,10 +15,10 @@ The artwork used in the app comes from Pinterest. Full credit goes to the origin
 ## Screenshots
  
 <p align="center">
-  <img src="https://postimg.cc/7G9m1DNr/image.png" alt="PomPom screenshot 1" width="220" />
-  <img src="https://i.postimg.cc/wBrnwV97/image.png" alt="PomPom screenshot 2" width="220" />
-  <img src="https://i.postimg.cc/jjjrg2PS/image.png" alt="PomPom screenshot 3" width="220" />
-  <img src="https://i.postimg.cc/s2b0YgJb/image.png" alt="PomPom screenshot 4" width="220" />
+  <img src="https://i.postimg.cc/905KhQR0/image.png" alt="PomPom screenshot 1" width="500" />
+  <img src="https://i.postimg.cc/wBrnwV97/image.png" alt="PomPom screenshot 2" width="500" />
+  <img src="https://i.postimg.cc/jjjrg2PS/image.png" alt="PomPom screenshot 3" width="500" />
+  <img src="https://i.postimg.cc/s2b0YgJb/image.png" alt="PomPom screenshot 4" width="500" />
 </p>
 
 
