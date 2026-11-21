@@ -2,6 +2,7 @@
 
 A cute Pomodoro study timer built with Ionic and Angular, packaged for Android with Cordova. PomPom studies with you, rests with you, and gets impatient when you disappear.
 
+Last Updated : November 21, 2026 11:51pm (README commit)
 
 ## Disclaimer
  
