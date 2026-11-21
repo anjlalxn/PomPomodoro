@@ -8,3 +8,5 @@ platforms/
 plugins/
 .angular/
 .env
+build.json
+*.jks
