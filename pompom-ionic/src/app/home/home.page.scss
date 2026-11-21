@@ -3,6 +3,12 @@ ion-toolbar {
   --color: rgb(148, 55, 55);
 }
 
+ion-header {
+  box-shadow: none;
+}
+
+
+
 .mode-segment {
   font-family: 'Lilita One', cursive;
   max-width: 480px;

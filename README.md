@@ -1,133 +1,154 @@
-## Clone inside an empty folder in VsCode and switch to final branch first
+# PomPom Pomodoro
+
+A cute Pomodoro study timer built with Ionic and Angular, packaged for Android with Cordova. PomPom studies with you, rests with you, and gets impatient when you disappear.
+
+
+## Disclaimer
+ 
+PomPom Pomodoro is a **school project made for educational purposes only**. It is not published on the Google Play Store or any other app store, and it is not sold or used for profit.
+ 
+Pompompurin is a character owned by **Sanrio**. This project is not affiliated with, endorsed by, or sponsored by Sanrio. All rights to the character belong to their respective owners.
+ 
+The artwork used in the app comes from Pinterest. Full credit goes to the original artists and owners of the art. I only changed the characters' facial expressions for this project. If you are an owner of any artwork used here and would like it credited differently or removed, please contact me.
+ 
+ 
+## Screenshots
+ 
+<p align="center">
+  <img src="https://postimg.cc/7G9m1DNr/image.png" alt="PomPom screenshot 1" width="220" />
+  <img src="https://i.postimg.cc/wBrnwV97/image.png" alt="PomPom screenshot 2" width="220" />
+  <img src="https://i.postimg.cc/jjjrg2PS/image.png" alt="PomPom screenshot 3" width="220" />
+  <img src="https://i.postimg.cc/s2b0YgJb/image.png" alt="PomPom screenshot 4" width="220" />
+</p>
+
+
+## Features
+
+- **Pomodoro timer** with pause, resume and reset
+- **Short break (5 min) and long break (15 min)**, switchable at any time from the tabs
+- **PomPom reacts to what you do**: the picture and message change when you focus, pause, rest, reset, or stay away too long
+- **Inactivity notification** if you pause and don't come back in time
+- **Background-safe timers**: uses real timestamps, so Android suspending the app doesn't make the clock drift
+- **Local notifications with sound** when a session or break is almost done and when it ends
+- **Foreground service notification** while a timer runs and the app is in the background
+- **Alarm sound** when a timer ends while the app is open
+- **To-do list** saved on the device, with a remaining counter and "clear done"
+- **PomPom AI tab for study assistance**
+
+## Tech stack
+
+- Ionic + Angular (standalone components, signals)
+- Cordova (Android)
+- Cordova plugins:
+  - `cordova-plugin-local-notification`
+  - `cordova-plugin-foreground-service`
+  - `cordova-plugin-android-permissions`
+
+## Getting started
+
+### Requirements
+
+- Node.js and npm
+- JDK 17
+- Android Studio with the Android SDK and platform-tools
+- `ANDROID_HOME` and `JAVA_HOME` set, and `platform-tools` on your `PATH`
 
 ```bash
-git clone https://github.com/anjlalxn/PomPomodoro.git
-cd PomPomodoro
-git checkout final-branch
+npm i -g @ionic/cli cordova
 ```
 
-## How to Run
-You need [Node.js](https://nodejs.org) (LTS version) installed.
+### Install
 
 ```bash
-cd pompom-ionic
+git clone <your-repo-url>
+cd <project-folder>
 npm install
-npm start
 ```
 
-Then open **http://localhost:4200** in your browser.
+### Run in the browser
 
-> If `npm start` doesn't work, use `npx ng serve` instead.
-> If `npm install` shows an `ERESOLVE` error, use `npm install --legacy-peer-deps`.
-
-**Do not open `home.page.html` directly in the browser.** It is an Angular template and will only show raw `{{ }}` text. Always run it with the commands above.
-
-## Where to Find the Files
-
-All the app code is inside `pompom-ionic/src/app/home`.
-
-
-## Folder Structure
-
-```
-PomPomodoro/
-└── pompom-ionic/
-    ├── package.json        (list of dependencies and scripts)
-    └── src/
-        ├── app/
-        │   ├── home/       (the main Pomodoro page)
-        │   ├── app.component.*
-        │   └── app.routes.ts
-        ├── assets/
-        ├── theme/
-        ├── global.scss
-        ├── index.html
-        └── main.ts
-```
-
-## Notes
-
-- `node_modules` is not committed to Git. Run `npm install` once after cloning.
-- Keep the terminal running while you edit. The page reloads automatically when you save.
-- Don't commit package-lock.json changes unless you added a package (undo with git checkout package-lock.json).
-
-# Final Steps 
-
-Run these in `pompom-ionic`, in this order.
-
-**1. Get the code and install packages if you haven't yet**
 ```bash
-cd pompom-ionic
-npm install
-npm start
+ionic serve
 ```
 
-**2. Check `ionic.config.json`.** The `"capacitor": {}` line must be removed, or every `ionic cordova` command will refuse to run. It should list only `cordova`.
+The app opens at `http://localhost:4200`. Cordova plugins don't exist in the browser, so notifications and the foreground service are skipped quietly. Test those on a phone.
 
-**3. Add the Android platform** (skip if a `platforms/android` folder already exists)
+### Run on an Android phone
+
+1. On the phone, enable **Developer options** and turn on **USB debugging**.
+2. Plug it in and check it appears with `adb devices`.
+3. Add the platform and plugins (first time only):
+
 ```bash
-ionic cordova platform add android
+cordova platform add android
+cordova plugin add cordova-plugin-local-notification
+cordova plugin add cordova-plugin-foreground-service
+cordova plugin add cordova-plugin-android-permissions
 ```
 
-**4. Install the plugins listed in `config.xml`**
+4. Build and run:
+
 ```bash
-ionic cordova prepare android
-ionic cordova plugin ls
+ionic build
+cordova run android --device
 ```
-The list should show these 8 plugins:
-- `cordova-plugin-statusbar`
-- `cordova-plugin-device`
-- `cordova-plugin-splashscreen`
-- `cordova-plugin-ionic-webview`
-- `cordova-plugin-ionic-keyboard`
-- `cordova-plugin-foreground-service`
-- `cordova-plugin-local-notification`
-- `cordova-plugin-android-permissions`
 
-If any are missing, add them with `ionic cordova plugin add <name> --save`.
+After any code change, run both commands again.
 
-**5. Regenerate the icons and splash** (only needed if the committed ones in `resources/android` and `resources/ios` are missing)
+### Build an APK
+
 ```bash
-npx cordova-res --skip-config --copy
+ionic build
+cordova build android
 ```
-Type **y** if it asks to install. The 10 "Error occurred while copying" warnings for `foreground` and `background` files are harmless.
 
-**6. Uninstall the old PomPom app from the phone.** Android caches the old icon.
+The APK is at `platforms/android/app/build/outputs/apk/debug/app-debug.apk`.
 
-**7. Build and run on the phone**
-```bash
-ionic cordova run android --device
-```
-Or just build the APK:
-```bash
-ionic cordova build android
-```
-This needs Android Studio, the Android SDK and JDK installed, plus USB debugging turned on on the phone.
+## Configuration
 
-**What to test on the phone**
-- The new icon and splash screen show.
-- Start a focus timer, leave the app, and check that the "still running" notification appears and that an alert fires when the timer ends.
-- Android 13+ should ask for notification permission on first launch.
+Timer settings are constants at the top of `src/app/home/home.page.ts`:
 
-**8. Get the APK**
-The APK is created by the build command in step 7. It is not in the repo. Find it here (inside `pompom-ionic`):
-```
-platforms/android/app/build/outputs/apk/debug/app-debug.apk
-```
-If your Cordova version is older, the path may be `platforms/android/build/outputs/apk/debug/android-debug.apk`. The build output prints the exact location at the end.
+| Constant | What it controls | Default |
+| --- | --- | --- |
+| `FOCUS_SECONDS` | Focus session length | `25` (test value, use `25 * 60` for real use) |
+| `SHORT_BREAK_SECONDS` | Short break length | `5 * 60` |
+| `LONG_BREAK_SECONDS` | Long break length | `15 * 60` |
+| `IMPATIENT_AFTER_SECONDS` | How long you can stay paused before PomPom gets impatient and sends a notification | `10 * 60` |
 
-- Do **not** commit the APK to the repo. Share it by Google Drive, Messenger or USB, or upload it on GitHub: **repo → Releases → Draft a new release → attach the APK**.
-- To install on a phone, copy the APK over and open it. Android will ask to allow **Install unknown apps** for the app you opened it from. Turn that on, then install.
-- The debug APK is enough for the school project. `ionic cordova build android --release` makes an **unsigned** APK that phones won't install until it is signed with a keystore.
+Rebuild the app after changing them.
 
-**9. Push to the repo once everything works**
-```bash
-git status
-git add .
-git commit -m "Add icons, splash, plugins and Android build setup"
-git pull origin final-branch
-git push origin final-branch
-```
-- Run `git status` first. `platforms/`, `plugins/`, `node_modules/` and any `.apk` file should **not** appear. If they do, don't commit them.
-- Make sure the fixed `ionic.config.json` (without `capacitor`), `config.xml` and the `resources/` folder are included.
-- If `git pull` shows a conflict, fix it in VS Code before pushing.
+## Notifications
+
+| Id | When it fires |
+| --- | --- |
+| 1 | Focus session complete |
+| 2 | Break over |
+| 3 | Paused for too long ("PomPom is getting impatient. Where did you go?") |
+
+Notifications are scheduled with the OS when a timer starts, so they still arrive if the app is in the background. They are cancelled when you pause, reset or switch modes.
+
+## Android notes
+
+- **Android 13+:** accept the notification permission prompt on first launch.
+- **Late or missing notifications:** set the app's battery usage to **Unrestricted** and allow **Alarms & reminders** in the app settings.
+- **Blank screen after build:** check that `www/index.html` exists. If your Angular build outputs to `www/browser`, change `outputPath` in `angular.json`.
+
+## Testing checklist
+
+**Basics**
+
+- Start, pause, resume and reset the focus timer
+- Let a focus session finish and a break finish in the app (alarm plays, returns to the Pomodoro tab after a break)
+- Switch tabs while a timer is running (the timer is cancelled and the clock resets)
+- Add, tick, delete and clear tasks, then reopen the app and check they persist
+
+**Notifications (on a phone)**
+
+- Pause, press Home, wait: the impatient notification arrives
+- Pause, then resume, reset or switch tabs quickly: no notification
+- Start focus or a break, press Home: the end notification arrives
+- First launch on Android 13+: the permission prompt appears
+
+## Credits
+
+This is a 6 member group work developed and quality tested by WMA 4A. 

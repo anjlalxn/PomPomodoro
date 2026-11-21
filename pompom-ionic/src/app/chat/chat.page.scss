@@ -1,0 +1,321 @@
+ion-toolbar {
+  --background: #fffec4;
+  --color: rgb(148, 55, 55);
+}
+
+ion-title {
+  font-family: 'Lilita One', cursive;
+}
+
+ion-header {
+  box-shadow: none;
+}
+
+.tb-btn {
+  font-family: 'Lilita One', cursive;
+  font-size: 14px;
+  color: rgb(148, 55, 55);
+  background: antiquewhite;
+  border: 2px solid rgb(123, 15, 15);
+  border-radius: 12px;
+  padding: 4px 10px;
+  margin: 0 8px;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+ion-content {
+  --background: radial-gradient(circle, rgba(255, 254, 196, 1) 0%, rgba(255, 255, 255, 1) 70%);
+}
+
+.chat {
+  padding: 12px 16px 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.net {
+  width: fit-content;
+  margin: 0 auto 12px;
+  padding: 4px 14px;
+  border: 2px solid rgb(207, 186, 145);
+  border-radius: 20px;
+  font-family: 'Lilita One', cursive;
+  font-size: 12px;
+  color: rgb(98, 84, 41);
+
+  &.off {
+    background: rgb(139, 16, 16);
+    border-color: rgb(232, 140, 140);
+    color: #fff;
+  }
+}
+
+.row {
+  display: flex;
+  margin: 10px 0;
+
+  &.end {
+    justify-content: flex-end;
+  }
+}
+
+.bubble {
+  max-width: 88%;
+  padding: 12px 16px;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: break-word;
+  animation: fadeIn 0.25s ease-in;
+
+  &.bot {
+    background: #fff;
+    color: rgb(98, 84, 41);
+    border: 3px solid rgb(207, 186, 145);
+    border-radius: 22px 22px 22px 4px;
+  }
+
+  &.user {
+    background: rgb(205, 156, 126); // beret brown, matches the About card
+    color: #fff;
+    border: 3px solid rgb(163, 115, 76);
+    border-radius: 22px 22px 4px 22px;
+    white-space: pre-wrap;
+  }
+
+  &.err {
+    background: rgb(139, 16, 16);
+    color: #fff;
+    border-radius: 12px;
+  }
+
+  &.loader {
+    font-family: 'Lilita One', cursive;
+    color: rgb(177, 111, 111);
+  }
+}
+
+// Markdown output is injected with [innerHTML], so it needs ::ng-deep
+.md {
+  ::ng-deep {
+    p { margin: 6px 0; font-family: 'Google Sans', sans-serif; color: inherit; }
+    ul, ol { padding-left: 20px; margin: 6px 0; }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #fff3d6;
+      padding: 1px 5px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    pre {
+      background: rgb(98, 84, 41);
+      color: #fffec4;
+      padding: 10px;
+      border-radius: 12px;
+      overflow-x: auto;
+      code { background: none; color: inherit; padding: 0; }
+    }
+    table { border-collapse: collapse; display: block; overflow-x: auto; }
+    th, td { border: 1px solid rgb(207, 186, 145); padding: 4px 8px; }
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+
+  button {
+    font-family: 'Lilita One', cursive;
+    color: rgb(148, 55, 55);
+    background: antiquewhite;
+    border: 3px solid rgb(123, 15, 15);
+    border-radius: 15px;
+    padding: 8px 14px;
+    font-size: 15px;
+  }
+}
+
+.composer {
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  background: #fffec4;
+  border-top: 3px solid rgb(207, 186, 145);
+
+  select {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 2px solid rgb(207, 186, 145);
+    background: #fff;
+    color: rgb(148, 55, 55);
+    font-family: 'Lilita One', cursive;
+  }
+}
+
+.send-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  ion-input {
+    --color: rgb(98, 84, 41);
+    --border-color: rgb(207, 186, 145);
+    --border-radius: 12px;
+    font-family: 'Google Sans', sans-serif;
+    background: #fff;
+    border-radius: 12px;
+  }
+}
+
+.pom-btn.send {
+  --background: antiquewhite;
+  --color: rgb(148, 55, 55);
+  --border-radius: 15px;
+  --border-width: 3px;
+  --border-style: solid;
+  --border-color: rgb(123, 15, 15);
+  --box-shadow: none;
+  font-family: 'Lilita One', cursive;
+  font-size: 18px;
+  text-transform: none;
+  width: 90px;
+  height: 46px;
+  flex-shrink: 0;
+}
+
+.retry {
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: rgb(177, 111, 111);
+  padding: 0 4px;
+}
+
+// ---- Chat list drawer ----
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(98, 84, 41, 0.45);
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(300px, 85vw);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  background: #fffec4;
+  border-right: 3px solid rgb(207, 186, 145);
+  padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  animation: slideIn 0.25s ease-out;
+}
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-family: 'Lilita One', cursive;
+  font-size: 20px;
+  color: rgb(148, 55, 55);
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgb(207, 186, 145);
+    background: #fff;
+  }
+
+  .close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: rgb(148, 55, 55);
+  }
+}
+
+.new-chat {
+  font-family: 'Lilita One', cursive;
+  font-size: 16px;
+  color: rgb(148, 55, 55);
+  background: antiquewhite;
+  border: 3px solid rgb(123, 15, 15);
+  border-radius: 15px;
+  padding: 8px 14px;
+  margin-bottom: 12px;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.items {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: #fff;
+  border: 2px solid rgb(207, 186, 145);
+  border-radius: 14px;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 14px;
+  color: rgb(98, 84, 41);
+
+  &.active {
+    background: antiquewhite;
+    border-color: rgb(123, 15, 15);
+  }
+
+  .title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .del {
+    background: none;
+    border: none;
+    font-size: 16px;
+    padding: 0 2px;
+
+    &:disabled {
+      opacity: 0.4;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}

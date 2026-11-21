@@ -1,0 +1,118 @@
+<ion-header>
+  <ion-toolbar>
+    <button slot="start" class="tb-btn" (click)="showList.set(true)" aria-label="Open chat list">
+      ☰ Chats
+    </button>
+    <ion-title>PomPom AI</ion-title>
+    <button
+      slot="end"
+      class="tb-btn"
+      (click)="newChat()"
+      [disabled]="loading()"
+      aria-label="New chat"
+    >
+      + New
+    </button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="chat">
+    <div class="net" [class.off]="!online()">
+      {{ online() ? 'Online' : 'Offline · PomPom AI lost connection' }}
+    </div>
+
+    <div class="row">
+      <div class="bubble bot">
+        <strong>PomPom AI:</strong> Hi! I'm PomPom AI 🍮 Ask me anything, or let me help plan
+        your study sessions.
+      </div>
+    </div>
+
+    @if (messages().length === 0) {
+      <div class="chips">
+        <button (click)="planTasks()">Plan my tasks</button>
+        <button (click)="studyTip()">Study tip</button>
+        <button (click)="cheerMeOn()">Cheer me on</button>
+      </div>
+    }
+
+    @for (m of messages(); track $index) {
+      @if (m.role === 'user') {
+        <div class="row end">
+          <div class="bubble user"><strong>ME:</strong> {{ m.content }}</div>
+        </div>
+      } @else {
+        <div class="row">
+          <div class="bubble bot">
+            <strong>PomPom AI:</strong>
+            <div class="md" [innerHTML]="m.html"></div>
+          </div>
+        </div>
+      }
+    }
+
+    @if (loading()) {
+      <div class="row"><div class="bubble bot loader">PomPom is thinking...</div></div>
+    }
+
+    @if (error()) {
+      <div class="row"><div class="bubble err">{{ error() }}</div></div>
+    }
+  </div>
+</ion-content>
+
+<ion-footer>
+  <div class="composer">
+    <select [value]="model()" (change)="onModel($event)" aria-label="Model">
+      @for (m of models; track m.id) {
+        <option [value]="m.id">{{ m.label }}</option>
+      }
+    </select>
+
+    <div class="send-row">
+      @if (canRetry()) {
+        <button class="retry" (click)="retry()" aria-label="Retry or regenerate">⟳</button>
+      }
+      <ion-input
+        fill="outline"
+        placeholder="Message PomPom AI..."
+        [value]="draft()"
+        (ionInput)="onInput($event)"
+        (keyup.enter)="send()"
+      ></ion-input>
+      <ion-button class="pom-btn send" (click)="send()" [disabled]="loading()">Send</ion-button>
+    </div>
+  </div>
+</ion-footer>
+
+@if (showList()) {
+  <div class="backdrop" (click)="showList.set(false)"></div>
+  <aside class="drawer" aria-label="Chat list">
+    <div class="drawer-head">
+      <div class="brand">
+        <img class="logo" src="assets/1.jpg" alt="Pompompurin logo" />
+        <span>Your chats</span>
+      </div>
+      <button class="close" (click)="showList.set(false)" aria-label="Close chat list">✕</button>
+    </div>
+
+    <button class="new-chat" (click)="newChat()" [disabled]="loading()">+ New chat</button>
+
+    <div class="items">
+      @for (c of sortedChats(); track c.id) {
+        <div class="item" [class.active]="c.id === activeId()" (click)="selectChat(c.id)">
+          <span class="title">{{ c.title }}</span>
+          <button
+            class="del"
+            (click)="deleteChat(c.id, $event)"
+            [disabled]="loading()"
+            aria-label="Delete chat"
+          >
+            🗑
+          </button>
+        </div>
+      }
+    </div>
+  </aside>
+}
