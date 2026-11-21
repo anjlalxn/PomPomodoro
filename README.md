@@ -116,8 +116,7 @@ platforms/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 If your Cordova version is older, the path may be `platforms/android/build/outputs/apk/debug/android-debug.apk`. The build output prints the exact location at the end.
 
-- Do **not** commit the APK to the repo. Share it by Google Drive, Messenger or USB, or upload it on GitHub: **repo → Releases → Draft a new release → attach the APK**.
-- To install on a phone, copy the APK over and open it. Android will ask to allow **Install unknown apps** for the app you opened it from. Turn that on, then install.
+- Do **not** commit the APK to the repo. Share it by Google Drive
 - The debug APK is enough for the school project. `ionic cordova build android --release` makes an **unsigned** APK that phones won't install until it is signed with a keystore.
 
 **9. Push to the repo once everything works**
